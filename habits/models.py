@@ -5,6 +5,17 @@ NULLABLE = {'null': True, 'blank': True}
 
 
 class Habit(models.Model):
+
+    PERIOD_CHOICES = (
+        ('1', 'Раз в день'),
+        ('2', 'Раз в два дня'),
+        ('3', 'Раз в три дня'),
+        ('4', 'Раз в четыре дня'),
+        ('5', 'Раз в пять дней'),
+        ('6', 'Раз в шесть дней'),
+        ('7', 'Раз в неделю'),
+    )
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='пользователь')
     place = models.CharField(max_length=100, verbose_name='место')
     time = models.TimeField(verbose_name='время')
@@ -14,6 +25,7 @@ class Habit(models.Model):
     reward = models.CharField(max_length=200, verbose_name='вознаграждение', **NULLABLE)
     time_to_complete = models.IntegerField(verbose_name='время на выполнение')
     is_public = models.BooleanField(verbose_name='публичная привычка')
+    period = models.CharField(max_length='1', choices=PERIOD_CHOICES, verbose_name='периодичность')
 
     def __str__(self):
         return f'{self.action} в {self.time} в {self.place}'
