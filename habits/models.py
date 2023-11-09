@@ -25,7 +25,7 @@ class Habit(models.Model):
     reward = models.CharField(max_length=200, verbose_name='вознаграждение', **NULLABLE)
     time_to_complete = models.IntegerField(verbose_name='время на выполнение')
     is_public = models.BooleanField(verbose_name='публичная привычка')
-    period = models.CharField(max_length='1', choices=PERIOD_CHOICES, verbose_name='периодичность')
+    period = models.CharField(max_length=1, choices=PERIOD_CHOICES, default='1', verbose_name='периодичность')
 
     def __str__(self):
         return f'{self.action} в {self.time} в {self.place}'
