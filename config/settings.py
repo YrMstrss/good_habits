@@ -116,6 +116,12 @@ LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Moscow'
 
+
+TIME_INPUT_FORMATS = [
+    "%H:%M"
+]
+
+
 USE_I18N = True
 
 USE_TZ = True
