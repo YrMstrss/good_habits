@@ -1,6 +1,7 @@
 from rest_framework import generics
 
 from habits.models import Habit
+from habits.permisions import IsOwner, IsPublic
 from habits.serializers import HabitSerializer
 
 
@@ -28,6 +29,7 @@ class HabitListAPIView(generics.ListAPIView):
 class HabitRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
+    permission_classes = [IsOwner | IsPublic]
 
 
 class HabitUpdateAPIView(generics.UpdateAPIView):
