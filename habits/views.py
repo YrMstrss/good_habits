@@ -19,19 +19,19 @@ class HabitListAPIView(generics.ListAPIView):
     serializer_class = HabitSerializer
     pagination_class = HabitPaginator
 
-    def get(self, request, **kwargs):
-        queryset = Habit.objects.all()
-        paginated_queryset = self.paginate_queryset(queryset)
-        serializer = HabitSerializer(paginated_queryset, many=True)
-        return self.get_paginated_response(serializer.data)
-
     def get_queryset(self):
         user = self.request.user
 
         queryset_owner = Habit.objects.filter(user=user)
         queryset_public = Habit.objects.filter(is_public=True)
 
-        return set(queryset_owner | queryset_public)
+        return queryset_owner.union(queryset_public)
+
+    def get(self, request, **kwargs):
+        queryset = self.get_queryset()
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = HabitSerializer(paginated_queryset, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 class HabitRetrieveAPIView(generics.RetrieveAPIView):
