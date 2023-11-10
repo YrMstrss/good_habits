@@ -1,6 +1,7 @@
 from rest_framework import generics
 
 from habits.models import Habit
+from habits.paginators import HabitPaginator
 from habits.permisions import IsOwner, IsPublic
 from habits.serializers import HabitSerializer
 
@@ -16,6 +17,13 @@ class HabitCreateAPIView(generics.CreateAPIView):
 
 class HabitListAPIView(generics.ListAPIView):
     serializer_class = HabitSerializer
+    pagination_class = HabitPaginator
+
+    def get(self, request, **kwargs):
+        queryset = Habit.objects.all()
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = HabitSerializer(paginated_queryset, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def get_queryset(self):
         user = self.request.user
