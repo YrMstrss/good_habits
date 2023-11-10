@@ -5,7 +5,6 @@ NULLABLE = {'null': True, 'blank': True}
 
 
 class Habit(models.Model):
-
     PERIOD_CHOICES = (
         ('1', 'Раз в день'),
         ('2', 'Раз в два дня'),
@@ -16,7 +15,8 @@ class Habit(models.Model):
         ('7', 'Раз в неделю'),
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='пользователь')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='пользователь',
+                             **NULLABLE)
     place = models.CharField(max_length=100, verbose_name='место')
     time = models.TimeField(verbose_name='время')
     action = models.CharField(max_length=200, verbose_name='действие')
