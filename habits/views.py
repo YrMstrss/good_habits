@@ -15,7 +15,14 @@ class HabitCreateAPIView(generics.CreateAPIView):
 
 class HabitListAPIView(generics.ListAPIView):
     serializer_class = HabitSerializer
-    queryset = Habit.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+
+        queryset_owner = Habit.objects.filter(user=user)
+        queryset_public = Habit.objects.filter(is_public=True)
+
+        return set(queryset_owner | queryset_public)
 
 
 class HabitRetrieveAPIView(generics.RetrieveAPIView):
