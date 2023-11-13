@@ -502,8 +502,8 @@ class HabitUpdateTestCase(APITestCase):
         )
 
 
-class HabitUpdateTestCase(APITestCase):
-    """Тест-кейс для редактирования привычек """
+class HabitDeleteTestCase(APITestCase):
+    """Тест-кейс для удаления привычек """
     def setUp(self) -> None:
         self.client = APIClient()
 
