@@ -10,6 +10,7 @@ from users.models import User
 
 class UserRegisterTestCase(APITestCase):
     """Тест-кейс модели пользователя """
+
     def setUp(self) -> None:
         self.client = APIClient()
 
@@ -35,8 +36,19 @@ class UserTestCase(APITestCase):
 
         self.client.force_authenticate(user=self.user)
 
-    def test_profile_view(self):
+        self.data = {
+            "id": 1,
+            "is_superuser": False,
+            "first_name": "Ivan",
+            "last_name": "Ivanov",
+            "is_staff": False,
+            "is_active": True,
+            "phone": "88005553535",
+            "city": "St.Petersburg",
+            "email": "ivan@ivanov.com"
+        }
 
+    def test_profile_view(self):
         """Тест просмотра профиля пользователя"""
 
         response = self.client.get(
@@ -61,6 +73,39 @@ class UserTestCase(APITestCase):
                 "date_joined": (now() + timedelta(hours=3)).strftime("%d.%m.%Y %H:%M"),
                 "phone": "88005553535",
                 "city": "Moscow",
+                "avatar": None,
+                "email": "ivan@ivanov.com",
+                "groups": [],
+                "user_permissions": []
+            }
+        )
+
+    def tset_update_user(self):
+        """Тест для редактирования профиля пользователя"""
+
+        response = self.client.put(
+            reverse('users:edit-user', args=[self.user.id]),
+            data=self.data
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            response.json(),
+            {
+                "id": 1,
+                "last_login": None,
+                "is_superuser": False,
+                "first_name": "Ivan",
+                "last_name": "Ivanov",
+                "is_staff": False,
+                "is_active": True,
+                "date_joined": (now() + timedelta(hours=3)).strftime("%d.%m.%Y %H:%M"),
+                "phone": "88005553535",
+                "city": "St.Petersburg",
                 "avatar": None,
                 "email": "ivan@ivanov.com",
                 "groups": [],
