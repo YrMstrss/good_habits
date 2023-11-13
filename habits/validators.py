@@ -25,3 +25,9 @@ class LinkedHabitValidator:
 def reward_and_linked_habit_validator(obj):
     if obj.linked_habit and obj.reward:
         raise ValidationError('У привычки не может быть одновременно и связанной привычки, и вознаграждения')
+
+
+def nice_habit_validator(obj):
+    if obj.is_nice:
+        if obj.linked_habit or obj.reward:
+            raise ValidationError('У приятной привычки не может быть связанной привычки или вознаграждения')
