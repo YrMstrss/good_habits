@@ -366,3 +366,45 @@ class HabitReadTestCase(APITestCase):
              ]
              }
         )
+
+    def test_read_single_habit(self):
+        self.client.force_authenticate(user=self.user_2)
+
+        responce_read_habit = self.client.get(
+            reverse('habit:view-habit', args=[self.habit_1.id])
+        )
+
+        self.assertEqual(
+            responce_read_habit.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            responce_read_habit.json(),
+            {
+                "id": 1,
+                "place": "в парке",
+                "time": "18:30",
+                "action": "тренировка",
+                "is_nice": False,
+                "reward": "вкусняшка",
+                "time_to_complete": 60,
+                "is_public": True,
+                "period": "2",
+                "user": 2,
+                "linked_habit": None
+            }
+        )
+
+        responce_read_habit = self.client.get(
+            reverse('habit:view-habit', args=[self.habit_2.id])
+        )
+
+        self.assertEqual(
+            responce_read_habit.status_code,
+            status.HTTP_403_FORBIDDEN
+        )
+
+    def tearDown(self) -> None:
+        User.objects.all().delete()
+        Habit.objects.all().delete()
