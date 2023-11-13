@@ -21,3 +21,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = ('password', )
+        read_only_fields = ['chat_id', ]
