@@ -500,3 +500,65 @@ class HabitUpdateTestCase(APITestCase):
             response.status_code,
             status.HTTP_403_FORBIDDEN
         )
+
+
+class HabitUpdateTestCase(APITestCase):
+    """Тест-кейс для редактирования привычек """
+    def setUp(self) -> None:
+        self.client = APIClient()
+
+        self.user = User.objects.create(
+            email='ivan@ivanov.com',
+            first_name='Ivan',
+            last_name='Ivanov',
+            phone='88005553535',
+            city='Moscow'
+        )
+        self.user.set_password('Ivanov123')
+        self.user.save()
+
+        self.user_2 = User.objects.create(
+            email='petr@petrov.com',
+            first_name='Petr',
+            last_name='Petrov',
+            phone='88005553535',
+            city='Moscow'
+        )
+        self.user_2.set_password('Petrov123')
+        self.user_2.save()
+
+        self.habit = Habit.objects.create(
+            place="в парке",
+            time="18:30",
+            action="тренировка",
+            is_nice=False,
+            is_public=True,
+            reward="вкусняшка",
+            time_to_complete=60,
+            period="2",
+            user_id=1,
+            linked_habit=None
+        )
+
+    def test_delete_habit(self):
+        self.client.force_authenticate(user=self.user_2)
+
+        response = self.client.delete(
+            reverse('habit:delete-habit', args=[self.habit.id])
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_403_FORBIDDEN
+        )
+
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.delete(
+            reverse('habit:delete-habit', args=[self.habit.id])
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT
+        )
