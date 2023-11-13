@@ -9,6 +9,10 @@ class User(AbstractUser):
     city = models.CharField(max_length=50, verbose_name='город')
     avatar = models.ImageField(upload_to='user_avatar/', verbose_name='фото', null=True, blank=True)
 
+    telegram_username = models.CharField(max_length=100, verbose_name='имя пользователя в телеграм', null=True,
+                                         blank=True)
+    chat_id = models.BigIntegerField(verbose_name='id чата с ботом', null=True, blank=True)
+
     email = models.EmailField(unique=True, verbose_name='почта')
     username = None
 
