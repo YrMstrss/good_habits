@@ -7,11 +7,9 @@ from users.models import User
 
 
 class HabitCreateTestCase(APITestCase):
-
     """Тест-кейс на создание привычек"""
 
     def setUp(self) -> None:
-
         self.client = APIClient()
 
         self.user = User.objects.create(
@@ -96,7 +94,6 @@ class HabitCreateTestCase(APITestCase):
         }
 
     def test_create_habit(self):
-
         # проверка корректного создания полезной привычки
 
         responce_good_habit_right = self.client.post(
@@ -206,3 +203,132 @@ class HabitCreateTestCase(APITestCase):
     def tearDown(self) -> None:
         User.objects.all().delete()
         Habit.objects.all().delete()
+
+
+class HabitReadTestCase(APITestCase):
+    """Тест-кейс для чтения привычек"""
+
+    maxDiff = None
+
+    def setUp(self) -> None:
+        self.client = APIClient()
+
+        self.user = User.objects.create(
+            email='ivan@ivanov.com',
+            first_name='Ivan',
+            last_name='Ivanov',
+            phone='88005553535',
+            city='Moscow'
+        )
+        self.user.set_password('Ivanov123')
+        self.user.save()
+
+        self.user_2 = User.objects.create(
+            email='petr@petrov.com',
+            first_name='Petr',
+            last_name='Petrov',
+            phone='88005553535',
+            city='Moscow'
+        )
+        self.user_2.set_password('Petrov123')
+        self.user_2.save()
+
+        self.habit_1 = Habit.objects.create(
+            place="в парке",
+            time="18:30",
+            action="тренировка",
+            is_nice=False,
+            is_public=True,
+            reward="вкусняшка",
+            time_to_complete=60,
+            period="2",
+            user_id=2,
+            linked_habit=None
+        )
+
+        self.habit_2 = Habit.objects.create(
+            place="в парке",
+            time="18:30",
+            action="пить воду",
+            is_nice=True,
+            is_public=False,
+            reward=None,
+            time_to_complete=60,
+            period=None,
+            user_id=1,
+            linked_habit=None
+        )
+
+        self.habit_3 = Habit.objects.create(
+            place="в парке",
+            time="18:30",
+            action="тренировка",
+            is_nice=False,
+            is_public=False,
+            reward=None,
+            time_to_complete=60,
+            period="2",
+            user_id=1,
+            linked_habit_id=2
+        )
+
+    def test_read_habit_list(self):
+        self.client.force_authenticate(user=self.user)
+
+        responce_read_list = self.client.get(
+            reverse('habit:list-habit')
+        )
+
+        self.assertEqual(
+            responce_read_list.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            responce_read_list.json(),
+            {"count": 3,
+             "next": None,
+             "previous": None,
+             "results": [
+                 {
+                     "id": 3,
+                     "place": "в парке",
+                     "time": "18:30",
+                     "action": "тренировка",
+                     "is_nice": False,
+                     "reward": None,
+                     "time_to_complete": 60,
+                     "is_public": False,
+                     "period": "2",
+                     "user": 1,
+                     "linked_habit": 2
+                 },
+                 {
+                     "id": 1,
+                     "place": "в парке",
+                     "time": "18:30",
+                     "action": "тренировка",
+                     "is_nice": False,
+                     "reward": "вкусняшка",
+                     "time_to_complete": 60,
+                     "is_public": True,
+                     "period": "2",
+                     "user": 2,
+                     "linked_habit": None
+                 },
+                 {
+                     "id": 2,
+                     "place": "в парке",
+                     "time": "18:30",
+                     "action": "пить воду",
+                     "is_nice": True,
+                     "reward": None,
+                     "time_to_complete": 60,
+                     "is_public": False,
+                     "period": None,
+                     "user": 1,
+                     "linked_habit": None
+                 }
+             ]
+             }
+        )
