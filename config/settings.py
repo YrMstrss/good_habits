@@ -147,4 +147,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DATETIME_FORMAT': "%d.%m.%Y %H:%M",
+    'TIME_FORMAT': "%H:%M"
 }
