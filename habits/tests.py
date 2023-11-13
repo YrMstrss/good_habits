@@ -332,3 +332,37 @@ class HabitReadTestCase(APITestCase):
              ]
              }
         )
+
+        self.client.force_authenticate(user=self.user_2)
+
+        responce_read_list = self.client.get(
+            reverse('habit:list-habit')
+        )
+
+        self.assertEqual(
+            responce_read_list.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            responce_read_list.json(),
+            {"count": 1,
+             "next": None,
+             "previous": None,
+             "results": [
+                 {
+                     "id": 1,
+                     "place": "в парке",
+                     "time": "18:30",
+                     "action": "тренировка",
+                     "is_nice": False,
+                     "reward": "вкусняшка",
+                     "time_to_complete": 60,
+                     "is_public": True,
+                     "period": "2",
+                     "user": 2,
+                     "linked_habit": None
+                 }
+             ]
+             }
+        )
