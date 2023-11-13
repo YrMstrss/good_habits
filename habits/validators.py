@@ -17,8 +17,9 @@ class LinkedHabitValidator:
 
     def __call__(self, value):
         tmp_value = dict(value).get(self.field)
-        if not tmp_value.is_nice:
-            raise ValidationError('Связанная привычка должна быть приятной')
+        if tmp_value:
+            if not tmp_value.is_nice:
+                raise ValidationError('Связанная привычка должна быть приятной')
 
 
 def reward_and_linked_habit_validator(obj):
