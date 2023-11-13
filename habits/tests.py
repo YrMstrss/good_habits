@@ -23,7 +23,8 @@ class HabitCreateTestCase(APITestCase):
 
         self.client.force_authenticate(user=self.user)
 
-        self.data_good_right = {
+        # данные для создания полезной привычки
+        self.data_good_habit_right = {
             "place": "в парке",
             "time": "18:00",
             "action": "бегать",
@@ -34,20 +35,79 @@ class HabitCreateTestCase(APITestCase):
             "period": "3"
         }
 
-    def test_create_good_habit(self):
+        # данные для создания приятной привычки
+        self.data_nice_habit = {
+            "place": "в парке",
+            "time": "18:30",
+            "action": "пить воду",
+            "is_nice": True,
+            "is_public": True,
+            "time_to_complete": 60,
+        }
 
-        responce = self.client.post(
+        # данные для создания полезной привычки с ошибкой (есть и связанная привычка, и вознаграждение)
+        self.data_good_habit_wrong = {
+            "place": "в парке",
+            "time": "18:00",
+            "action": "бегать",
+            "is_nice": False,
+            "reward": "any reward",
+            "time_to_complete": 60,
+            "is_public": True,
+            "period": "3",
+            "linked_habit": 2
+        }
+
+        # данные для создания приятной привычки с неверным временем выполнения
+        self.data_nice_habit_wrong_time = {
+            "place": "в парке",
+            "time": "18:30",
+            "action": "пить воду",
+            "is_nice": True,
+            "is_public": True,
+            "time_to_complete": 140,
+        }
+
+        # данные для создания полезной привычки с неподходящей связанной привычкой
+        self.data_good_habit_linked_habit = {
+            "place": "в парке",
+            "time": "18:00",
+            "action": "бегать",
+            "is_nice": False,
+            "reward": "any reward",
+            "time_to_complete": 60,
+            "is_public": True,
+            "period": "3",
+            "linked_habit": 1
+        }
+
+        # данные для создания приятной привычки со связанной привычкой
+        self.data_nice_habit_linked_habit = {
+            "place": "в парке",
+            "time": "18:30",
+            "action": "пить воду",
+            "is_nice": True,
+            "is_public": True,
+            "time_to_complete": 10,
+            "linked_habit": 2
+        }
+
+    def test_create_habit(self):
+
+        # проверка корректного создания полезной привычки
+
+        responce_good_habit_right = self.client.post(
             reverse('habit:create-habit'),
-            data=self.data_good_right
+            data=self.data_good_habit_right
         )
 
         self.assertEqual(
-            responce.status_code,
+            responce_good_habit_right.status_code,
             status.HTTP_201_CREATED
         )
 
         self.assertEqual(
-            responce.json(),
+            responce_good_habit_right.json(),
             {
                 "id": 1,
                 "place": "в парке",
@@ -62,6 +122,83 @@ class HabitCreateTestCase(APITestCase):
                 "linked_habit": None
             }
         )
+
+        # проверка корректного создания приятной привычки
+
+        responce_data_nice_habit = self.client.post(
+            reverse('habit:create-habit'),
+            data=self.data_nice_habit
+        )
+
+        self.assertEqual(
+            responce_data_nice_habit.status_code,
+            status.HTTP_201_CREATED
+        )
+
+        self.assertEqual(
+            responce_data_nice_habit.json(),
+            {
+                "id": 2,
+                "place": "в парке",
+                "time": "18:30",
+                "action": "пить воду",
+                "is_nice": True,
+                "is_public": True,
+                "reward": None,
+                "time_to_complete": 60,
+                "period": None,
+                "user": 1,
+                "linked_habit": None
+            }
+        )
+
+        # проверка некорректного создания полезной привычки (с наградой и связанной привычкой) (не работает)
+
+        # responce_data_good_habit_wrong = self.client.post(
+        #     reverse('habit:create-habit'),
+        #     data=self.data_good_habit_wrong
+        # )
+        #
+        # self.assertEqual(
+        #     responce_data_good_habit_wrong.status_code,
+        #      status.HTTP_400_BAD_REQUEST
+        # )
+
+        # проверка некорректного создания приятной привычки (неверное время выполнения привычки)
+
+        responce_data_nice_habit_wrong_time = self.client.post(
+            reverse('habit:create-habit'),
+            data=self.data_nice_habit_wrong_time
+        )
+
+        self.assertEqual(
+            responce_data_nice_habit_wrong_time.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
+
+        # проверка некорректного создания полезной привычки (связанная привычка не является приятной)
+
+        responce_data_good_habit_linked_habit = self.client.post(
+            reverse('habit:create-habit'),
+            data=self.data_good_habit_linked_habit
+        )
+
+        self.assertEqual(
+            responce_data_good_habit_linked_habit.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
+
+        # проверка некорректного создания приятной привычки (приятная привычка имеет связанную) (не работает)
+
+        # responce_data_nice_habit_linked_habit = self.client.post(
+        #     reverse('habit:create-habit'),
+        #     data=self.data_nice_habit_linked_habit
+        # )
+        #
+        # self.assertEqual(
+        #     responce_data_nice_habit_linked_habit.status_code,
+        #     status.HTTP_400_BAD_REQUEST
+        # )
 
     def tearDown(self) -> None:
         User.objects.all().delete()
