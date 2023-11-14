@@ -4,6 +4,7 @@ from habits.models import Habit
 from habits.paginators import HabitPaginator
 from habits.permisions import IsOwner, IsPublic
 from habits.serializers import HabitSerializer
+from habits.services import create_periodic_task
 
 
 class HabitCreateAPIView(generics.CreateAPIView):
@@ -13,6 +14,8 @@ class HabitCreateAPIView(generics.CreateAPIView):
         habit = serializer.save()
         habit.user = self.request.user
         habit.save()
+
+        create_periodic_task(habit)
 
 
 class HabitListAPIView(generics.ListAPIView):
