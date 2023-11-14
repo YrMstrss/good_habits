@@ -9,7 +9,7 @@ from users.models import User
 
 
 class UserRegisterTestCase(APITestCase):
-    """Тест-кейс модели пользователя """
+    """Тест-кейс для регистрации пользователя """
 
     def setUp(self) -> None:
         self.client = APIClient()
@@ -21,6 +21,9 @@ class UserRegisterTestCase(APITestCase):
 
 
 class UserTestCase(APITestCase):
+    """
+    Тест-кейс для модели пользователя
+    """
     def setUp(self) -> None:
         self.client = APIClient()
 
@@ -49,8 +52,9 @@ class UserTestCase(APITestCase):
         }
 
     def test_profile_view(self):
-        """Тест просмотра профиля пользователя"""
-
+        """
+        Тест просмотра профиля пользователя
+        """
         response = self.client.get(
             reverse('users:view-user', args=[self.user.id])
         )
@@ -81,8 +85,9 @@ class UserTestCase(APITestCase):
         )
 
     def tset_update_user(self):
-        """Тест для редактирования профиля пользователя"""
-
+        """
+        Тест для редактирования профиля пользователя
+        """
         response = self.client.put(
             reverse('users:edit-user', args=[self.user.id]),
             data=self.data
