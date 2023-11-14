@@ -271,6 +271,9 @@ class HabitReadTestCase(APITestCase):
         )
 
     def test_read_habit_list(self):
+
+        """Тест на чтение списка привычек"""
+
         self.client.force_authenticate(user=self.user)
 
         response_read_list = self.client.get(
@@ -366,6 +369,9 @@ class HabitReadTestCase(APITestCase):
         )
 
     def test_read_single_habit(self):
+
+        """Тест на чтение одной привычки"""
+
         self.client.force_authenticate(user=self.user_2)
 
         response_read_habit = self.client.get(
@@ -409,7 +415,9 @@ class HabitReadTestCase(APITestCase):
 
 
 class HabitUpdateTestCase(APITestCase):
+
     """Тест-кейс для редактирования привычек """
+
     def setUp(self) -> None:
         self.client = APIClient()
 
@@ -458,6 +466,7 @@ class HabitUpdateTestCase(APITestCase):
         }
 
     def test_update_habit(self):
+
         """Тест для изменения привычки"""
 
         self.client.force_authenticate(user=self.user)
@@ -503,7 +512,9 @@ class HabitUpdateTestCase(APITestCase):
 
 
 class HabitDeleteTestCase(APITestCase):
+
     """Тест-кейс для удаления привычек """
+
     def setUp(self) -> None:
         self.client = APIClient()
 
@@ -541,6 +552,9 @@ class HabitDeleteTestCase(APITestCase):
         )
 
     def test_delete_habit(self):
+
+        """Тест на удаление своей привычки"""
+
         self.client.force_authenticate(user=self.user_2)
 
         response = self.client.delete(
