@@ -5,6 +5,9 @@ from users.models import User
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для регистрации пользователя
+    """
     password = serializers.CharField(write_only=True, validators=[validate_password])
 
     def create(self, validated_data):
@@ -17,6 +20,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели пользователя
+    """
 
     class Meta:
         model = User
