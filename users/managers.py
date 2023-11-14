@@ -2,6 +2,9 @@ from django.contrib.auth.base_user import BaseUserManager
 
 
 class UserManager(BaseUserManager):
+
+    """Менеджер для создания пользователя"""
+
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
