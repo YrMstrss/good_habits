@@ -96,18 +96,18 @@ class HabitCreateTestCase(APITestCase):
     def test_create_habit(self):
         # проверка корректного создания полезной привычки
 
-        responce_good_habit_right = self.client.post(
+        response_good_habit_right = self.client.post(
             reverse('habit:create-habit'),
             data=self.data_good_habit_right
         )
 
         self.assertEqual(
-            responce_good_habit_right.status_code,
+            response_good_habit_right.status_code,
             status.HTTP_201_CREATED
         )
 
         self.assertEqual(
-            responce_good_habit_right.json(),
+            response_good_habit_right.json(),
             {
                 "id": 1,
                 "place": "в парке",
@@ -125,18 +125,18 @@ class HabitCreateTestCase(APITestCase):
 
         # проверка корректного создания приятной привычки
 
-        responce_data_nice_habit = self.client.post(
+        response_data_nice_habit = self.client.post(
             reverse('habit:create-habit'),
             data=self.data_nice_habit
         )
 
         self.assertEqual(
-            responce_data_nice_habit.status_code,
+            response_data_nice_habit.status_code,
             status.HTTP_201_CREATED
         )
 
         self.assertEqual(
-            responce_data_nice_habit.json(),
+            response_data_nice_habit.json(),
             {
                 "id": 2,
                 "place": "в парке",
@@ -154,49 +154,49 @@ class HabitCreateTestCase(APITestCase):
 
         # проверка некорректного создания полезной привычки (с наградой и связанной привычкой) (не работает)
 
-        # responce_data_good_habit_wrong = self.client.post(
+        # response_data_good_habit_wrong = self.client.post(
         #     reverse('habit:create-habit'),
         #     data=self.data_good_habit_wrong
         # )
         #
         # self.assertEqual(
-        #     responce_data_good_habit_wrong.status_code,
+        #     response_data_good_habit_wrong.status_code,
         #      status.HTTP_400_BAD_REQUEST
         # )
 
         # проверка некорректного создания приятной привычки (неверное время выполнения привычки)
 
-        responce_data_nice_habit_wrong_time = self.client.post(
+        response_data_nice_habit_wrong_time = self.client.post(
             reverse('habit:create-habit'),
             data=self.data_nice_habit_wrong_time
         )
 
         self.assertEqual(
-            responce_data_nice_habit_wrong_time.status_code,
+            response_data_nice_habit_wrong_time.status_code,
             status.HTTP_400_BAD_REQUEST
         )
 
         # проверка некорректного создания полезной привычки (связанная привычка не является приятной)
 
-        responce_data_good_habit_linked_habit = self.client.post(
+        response_data_good_habit_linked_habit = self.client.post(
             reverse('habit:create-habit'),
             data=self.data_good_habit_linked_habit
         )
 
         self.assertEqual(
-            responce_data_good_habit_linked_habit.status_code,
+            response_data_good_habit_linked_habit.status_code,
             status.HTTP_400_BAD_REQUEST
         )
 
         # проверка некорректного создания приятной привычки (приятная привычка имеет связанную) (не работает)
 
-        # responce_data_nice_habit_linked_habit = self.client.post(
+        # response_data_nice_habit_linked_habit = self.client.post(
         #     reverse('habit:create-habit'),
         #     data=self.data_nice_habit_linked_habit
         # )
         #
         # self.assertEqual(
-        #     responce_data_nice_habit_linked_habit.status_code,
+        #     response_data_nice_habit_linked_habit.status_code,
         #     status.HTTP_400_BAD_REQUEST
         # )
 
@@ -273,17 +273,17 @@ class HabitReadTestCase(APITestCase):
     def test_read_habit_list(self):
         self.client.force_authenticate(user=self.user)
 
-        responce_read_list = self.client.get(
+        response_read_list = self.client.get(
             reverse('habit:list-habit')
         )
 
         self.assertEqual(
-            responce_read_list.status_code,
+            response_read_list.status_code,
             status.HTTP_200_OK
         )
 
         self.assertEqual(
-            responce_read_list.json(),
+            response_read_list.json(),
             {"count": 3,
              "next": None,
              "previous": None,
@@ -333,17 +333,17 @@ class HabitReadTestCase(APITestCase):
 
         self.client.force_authenticate(user=self.user_2)
 
-        responce_read_list = self.client.get(
+        response_read_list = self.client.get(
             reverse('habit:list-habit')
         )
 
         self.assertEqual(
-            responce_read_list.status_code,
+            response_read_list.status_code,
             status.HTTP_200_OK
         )
 
         self.assertEqual(
-            responce_read_list.json(),
+            response_read_list.json(),
             {"count": 1,
              "next": None,
              "previous": None,
@@ -368,17 +368,17 @@ class HabitReadTestCase(APITestCase):
     def test_read_single_habit(self):
         self.client.force_authenticate(user=self.user_2)
 
-        responce_read_habit = self.client.get(
+        response_read_habit = self.client.get(
             reverse('habit:view-habit', args=[self.habit_1.id])
         )
 
         self.assertEqual(
-            responce_read_habit.status_code,
+            response_read_habit.status_code,
             status.HTTP_200_OK
         )
 
         self.assertEqual(
-            responce_read_habit.json(),
+            response_read_habit.json(),
             {
                 "id": 1,
                 "place": "в парке",
@@ -394,12 +394,12 @@ class HabitReadTestCase(APITestCase):
             }
         )
 
-        responce_read_habit = self.client.get(
+        response_read_habit = self.client.get(
             reverse('habit:view-habit', args=[self.habit_2.id])
         )
 
         self.assertEqual(
-            responce_read_habit.status_code,
+            response_read_habit.status_code,
             status.HTTP_403_FORBIDDEN
         )
 
