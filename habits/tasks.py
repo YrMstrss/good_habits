@@ -8,6 +8,9 @@ TOKEN = os.getenv('TG_BOT_API_KEY')
 
 
 def enable_notifications(obj: Habit, token=TOKEN):
+    """
+    Периодическая задача. Отправляет пользователю сообщение в телеграм с напоминанием о том, что пора выполнить привычку
+    """
     message = f'Пора выполнить привычку: {obj}' \
               f'Время на выполнение {obj.time_to_complete} секунд'
 
