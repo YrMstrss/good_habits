@@ -35,8 +35,9 @@ class UserGetChatIdView(View):
         token = os.getenv('TG_BOT_API_KEY')
         chat_ids = get_chat_ids(token)
         key = user.telegram_username
-        chat_id = chat_ids[key]
-        user.chat_id = chat_id
-        user.save()
+        if key in chat_ids.keys():
+            chat_id = chat_ids[key]
+            user.chat_id = chat_id
+            user.save()
 
         return redirect(reverse_lazy('users:view-user', args=[pk]))
