@@ -7,7 +7,12 @@ from django_celery_beat.models import PeriodicTask, \
 from habits.models import Habit
 
 
-def create_periodic_task(obj: Habit):
+def create_periodic_task(obj: Habit) -> None:
+    """
+    Функция, создающая периодическую задачу по данным модели привычки
+    :param obj: Объект класса Habit
+    :return: None
+    """
     schedule, created = IntervalSchedule.objects.get_or_create(
         every=int(obj.period),
         period=IntervalSchedule.DAYS,
