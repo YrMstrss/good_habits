@@ -37,16 +37,18 @@ class RewardAndLinkedHabitValidator:
     ни вознаграждения, ни связанной привычки
     """
 
-    def __init__(self, field_1, field_2):
+    def __init__(self, field_1, field_2, field_3):
         self.field_1 = field_1
         self.field_2 = field_2
+        self.field_3 = field_3
 
     def __call__(self, value):
         tmp_value_1 = dict(value).get(self.field_1)
         tmp_value_2 = dict(value).get(self.field_2)
+        tmp_value_3 = dict(value).get(self.field_3)
         if tmp_value_1 and tmp_value_2:
             raise ValidationError('У привычки не может быть одновременно и связанной привычки, и вознаграждения')
-        elif not tmp_value_1 and not tmp_value_2:
+        elif not tmp_value_1 and not tmp_value_2 and not tmp_value_3:
             raise ValidationError('У полезной привычки должно быть или вознаграждение, или связанная привычка')
 
 
@@ -64,6 +66,6 @@ class NiceHabitValidator:
         tmp_value_2 = dict(value).get(self.field_2)
         tmp_value_3 = dict(value).get(self.field_3)
 
-        if tmp_value_1:
+        if tmp_value_1 == True:
             if tmp_value_2 or tmp_value_3:
                 raise ValidationError('У приятной привычки не может быть связанной привычки или вознаграждения')
