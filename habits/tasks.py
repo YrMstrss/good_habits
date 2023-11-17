@@ -16,8 +16,7 @@ def enable_notifications(pk: int, token=TOKEN) -> None:
     """
     obj = Habit.objects.get(pk=pk)
 
-    message = f'Пора выполнить привычку: {obj}' \
-              f'Время на выполнение {obj.time_to_complete} секунд'
+    message = f'Пора выполнить привычку: {obj}\nВремя на выполнение {obj.time_to_complete} секунд'
 
     send_message_url = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={obj.user.chat_id}&text={message}"
     requests.get(send_message_url)
