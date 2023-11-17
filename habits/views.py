@@ -22,7 +22,8 @@ class HabitCreateAPIView(generics.CreateAPIView):
         habit.user = self.request.user
         habit.save()
 
-        create_periodic_task(habit)
+        if not habit.is_nice:
+            create_periodic_task(habit)
 
 
 class HabitListAPIView(generics.ListAPIView):
