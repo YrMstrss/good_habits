@@ -32,7 +32,7 @@ class HabitCreateTestCase(APITestCase):
             "is_nice": False,
             "reward": "any reward",
             "time_to_complete": 60,
-            "is_public": True,
+            "is_public": False,
             "period": "3"
         }
 
@@ -42,7 +42,7 @@ class HabitCreateTestCase(APITestCase):
             "time": "18:30",
             "action": "пить воду",
             "is_nice": True,
-            "is_public": True,
+            "is_public": False,
             "time_to_complete": 60,
         }
 
@@ -116,7 +116,7 @@ class HabitCreateTestCase(APITestCase):
                 "is_nice": False,
                 "reward": "any reward",
                 "time_to_complete": 60,
-                "is_public": True,
+                "is_public": False,
                 "period": "3",
                 "user": 1,
                 "linked_habit": None
@@ -143,7 +143,7 @@ class HabitCreateTestCase(APITestCase):
                 "time": "18:30",
                 "action": "пить воду",
                 "is_nice": True,
-                "is_public": True,
+                "is_public": False,
                 "reward": None,
                 "time_to_complete": 60,
                 "period": None,
@@ -200,10 +200,6 @@ class HabitCreateTestCase(APITestCase):
             status.HTTP_400_BAD_REQUEST
         )
 
-    def tearDown(self) -> None:
-        User.objects.all().delete()
-        Habit.objects.all().delete()
-
 
 class HabitReadTestCase(APITestCase):
     """Тест-кейс для чтения привычек"""
@@ -212,7 +208,7 @@ class HabitReadTestCase(APITestCase):
         self.client = APIClient()
 
         self.user = User.objects.create(
-            email='ivan@ivanov.com',
+            email='ivan@ivanovread.com',
             first_name='Ivan',
             last_name='Ivanov',
             phone='88005553535',
@@ -270,7 +266,7 @@ class HabitReadTestCase(APITestCase):
             linked_habit_id=2
         )
 
-    def test_read_habit_list(self):
+    def test_read_habit_list_owner_and_pubic(self):
         """Тест на чтение списка привычек"""
 
         self.client.force_authenticate(user=self.user)
@@ -291,7 +287,7 @@ class HabitReadTestCase(APITestCase):
              "previous": None,
              "results": [
                  {
-                     "id": 3,
+                     "id": self.habit_3.id,
                      "place": "в парке",
                      "time": "18:30",
                      "action": "тренировка",
@@ -300,11 +296,11 @@ class HabitReadTestCase(APITestCase):
                      "time_to_complete": 60,
                      "is_public": False,
                      "period": "2",
-                     "user": 1,
+                     "user": self.habit_3.user.id,
                      "linked_habit": 2
                  },
                  {
-                     "id": 1,
+                     "id": self.habit_1.id,
                      "place": "в парке",
                      "time": "18:30",
                      "action": "тренировка",
@@ -313,11 +309,11 @@ class HabitReadTestCase(APITestCase):
                      "time_to_complete": 60,
                      "is_public": True,
                      "period": "2",
-                     "user": 2,
+                     "user": self.habit_1.user.id,
                      "linked_habit": None
                  },
                  {
-                     "id": 2,
+                     "id": self.habit_2.id,
                      "place": "в парке",
                      "time": "18:30",
                      "action": "пить воду",
@@ -326,12 +322,14 @@ class HabitReadTestCase(APITestCase):
                      "time_to_complete": 60,
                      "is_public": False,
                      "period": None,
-                     "user": 1,
+                     "user": self.habit_2.user.id,
                      "linked_habit": None
                  }
              ]
              }
         )
+
+    def test_read_habit_list_owner(self):
 
         self.client.force_authenticate(user=self.user_2)
 
@@ -351,7 +349,7 @@ class HabitReadTestCase(APITestCase):
              "previous": None,
              "results": [
                  {
-                     "id": 1,
+                     "id": self.habit_1.id,
                      "place": "в парке",
                      "time": "18:30",
                      "action": "тренировка",
@@ -360,14 +358,14 @@ class HabitReadTestCase(APITestCase):
                      "time_to_complete": 60,
                      "is_public": True,
                      "period": "2",
-                     "user": 2,
+                     "user": self.habit_1.user.id,
                      "linked_habit": None
                  }
              ]
              }
         )
 
-    def test_read_single_habit(self):
+    def test_read_single_habit_public(self):
         """Тест на чтение одной привычки"""
 
         self.client.force_authenticate(user=self.user_2)
@@ -384,7 +382,7 @@ class HabitReadTestCase(APITestCase):
         self.assertEqual(
             response_read_habit.json(),
             {
-                "id": 1,
+                "id": self.habit_1.id,
                 "place": "в парке",
                 "time": "18:30",
                 "action": "тренировка",
@@ -398,6 +396,11 @@ class HabitReadTestCase(APITestCase):
             }
         )
 
+    def test_read_single_habit_not_public(self):
+        """Тест на чтение одной привычки"""
+
+        self.client.force_authenticate(user=self.user_2)
+
         response_read_habit = self.client.get(
             reverse('habit:view-habit', args=[self.habit_2.id])
         )
@@ -406,10 +409,6 @@ class HabitReadTestCase(APITestCase):
             response_read_habit.status_code,
             status.HTTP_403_FORBIDDEN
         )
-
-    def tearDown(self) -> None:
-        User.objects.all().delete()
-        Habit.objects.all().delete()
 
 
 class HabitUpdateTestCase(APITestCase):
@@ -480,7 +479,7 @@ class HabitUpdateTestCase(APITestCase):
         self.assertEqual(
             response.json(),
             {
-                "id": 1,
+                "id": self.habit.id,
                 "place": "на стадионе",
                 "time": "18:00",
                 "action": "бегать",
@@ -489,7 +488,7 @@ class HabitUpdateTestCase(APITestCase):
                 "time_to_complete": 60,
                 "is_public": True,
                 "period": "3",
-                "user": 1,
+                "user": self.habit.user.id,
                 "linked_habit": None
             }
         )
