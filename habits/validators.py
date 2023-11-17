@@ -66,6 +66,22 @@ class NiceHabitValidator:
         tmp_value_2 = dict(value).get(self.field_2)
         tmp_value_3 = dict(value).get(self.field_3)
 
-        if tmp_value_1 == True:
+        if tmp_value_1:
             if tmp_value_2 or tmp_value_3:
                 raise ValidationError('У приятной привычки не может быть связанной привычки или вознаграждения')
+
+
+class PeriodValidator:
+    """
+    Валидатор для проверки наличия у полезной привычки периода выполнения
+    """
+
+    def __init__(self, field_1, field_2):
+        self.field_1 = field_1
+        self.field_2 = field_2
+
+    def __call__(self, value):
+        tmp_value_1 = dict(value).get(self.field_1)
+        tmp_value_2 = dict(value).get(self.field_2)
+        if not tmp_value_1 and not tmp_value_2:
+            raise ValidationError('У полезной привычки должна быть периодичность')
