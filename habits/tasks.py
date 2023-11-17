@@ -7,13 +7,15 @@ from habits.models import Habit
 TOKEN = os.getenv('TG_BOT_API_KEY')
 
 
-def enable_notifications(obj: Habit, token=TOKEN) -> None:
+def enable_notifications(pk: int, token=TOKEN) -> None:
     """
     Периодическая задача. Отправляет пользователю сообщение в телеграм с напоминанием о том, что пора выполнить привычку
-    :param obj: Объект типа Habit
+    :param pk: ID привычки
     :param token: API-токен чат-бота в телеграм
     :return: None
     """
+    obj = Habit.objects.get(pk=pk)
+
     message = f'Пора выполнить привычку: {obj}' \
               f'Время на выполнение {obj.time_to_complete} секунд'
 
