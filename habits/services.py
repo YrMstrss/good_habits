@@ -18,19 +18,16 @@ def create_periodic_task(obj: Habit) -> None:
         period=IntervalSchedule.DAYS,
     )
 
-    if datetime.now().time() < Habit.time:
-        start_time = datetime.combine(datetime.today(), Habit.time)
+    if datetime.now().time() < obj.time:
+        start_time = datetime.combine(datetime.today(), obj.time)
     else:
-        start_time = datetime.combine(datetime.today() + timedelta(days=1), Habit.time)
+        start_time = datetime.combine(datetime.today() + timedelta(days=1), obj.time)
 
     PeriodicTask.objects.create(
         interval=schedule,
         name=obj,
         task='habits.tasks.enable_notifications',
         start_time=start_time,
-        args=json.dumps([obj]),
-        kwargs=json.dumps({
-            'be_careful': True,
-        }),
+        args=[obj.pk],
         expires=datetime.utcnow() + timedelta(seconds=30)
     )

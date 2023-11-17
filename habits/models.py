@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-from habits.validators import reward_and_linked_habit_validator, nice_habit_validator
-
 NULLABLE = {'null': True, 'blank': True}
 
 
@@ -32,10 +30,6 @@ class Habit(models.Model):
 
     def __str__(self):
         return f'{self.action} в {self.time} в {self.place}'
-
-    def clean(self):
-        reward_and_linked_habit_validator(self),
-        nice_habit_validator(self)
 
     class Meta:
         verbose_name = 'привычка'
