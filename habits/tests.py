@@ -152,17 +152,17 @@ class HabitCreateTestCase(APITestCase):
             }
         )
 
-        # проверка некорректного создания полезной привычки (с наградой и связанной привычкой) (не работает)
+        # проверка некорректного создания полезной привычки (с наградой и связанной привычкой)
 
-        # response_data_good_habit_wrong = self.client.post(
-        #     reverse('habit:create-habit'),
-        #     data=self.data_good_habit_wrong
-        # )
-        #
-        # self.assertEqual(
-        #     response_data_good_habit_wrong.status_code,
-        #      status.HTTP_400_BAD_REQUEST
-        # )
+        response_data_good_habit_wrong = self.client.post(
+            reverse('habit:create-habit'),
+            data=self.data_good_habit_wrong
+        )
+
+        self.assertEqual(
+            response_data_good_habit_wrong.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
 
         # проверка некорректного создания приятной привычки (неверное время выполнения привычки)
 
@@ -188,17 +188,17 @@ class HabitCreateTestCase(APITestCase):
             status.HTTP_400_BAD_REQUEST
         )
 
-        # проверка некорректного создания приятной привычки (приятная привычка имеет связанную) (не работает)
+        # проверка некорректного создания приятной привычки (приятная привычка имеет связанную)
 
-        # response_data_nice_habit_linked_habit = self.client.post(
-        #     reverse('habit:create-habit'),
-        #     data=self.data_nice_habit_linked_habit
-        # )
-        #
-        # self.assertEqual(
-        #     response_data_nice_habit_linked_habit.status_code,
-        #     status.HTTP_400_BAD_REQUEST
-        # )
+        response_data_nice_habit_linked_habit = self.client.post(
+            reverse('habit:create-habit'),
+            data=self.data_nice_habit_linked_habit
+        )
+
+        self.assertEqual(
+            response_data_nice_habit_linked_habit.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
 
     def tearDown(self) -> None:
         User.objects.all().delete()
@@ -271,7 +271,6 @@ class HabitReadTestCase(APITestCase):
         )
 
     def test_read_habit_list(self):
-
         """Тест на чтение списка привычек"""
 
         self.client.force_authenticate(user=self.user)
@@ -369,7 +368,6 @@ class HabitReadTestCase(APITestCase):
         )
 
     def test_read_single_habit(self):
-
         """Тест на чтение одной привычки"""
 
         self.client.force_authenticate(user=self.user_2)
@@ -415,7 +413,6 @@ class HabitReadTestCase(APITestCase):
 
 
 class HabitUpdateTestCase(APITestCase):
-
     """Тест-кейс для редактирования привычек """
 
     def setUp(self) -> None:
@@ -466,7 +463,6 @@ class HabitUpdateTestCase(APITestCase):
         }
 
     def test_update_habit(self):
-
         """Тест для изменения привычки"""
 
         self.client.force_authenticate(user=self.user)
@@ -512,7 +508,6 @@ class HabitUpdateTestCase(APITestCase):
 
 
 class HabitDeleteTestCase(APITestCase):
-
     """Тест-кейс для удаления привычек """
 
     def setUp(self) -> None:
@@ -552,7 +547,6 @@ class HabitDeleteTestCase(APITestCase):
         )
 
     def test_delete_habit(self):
-
         """Тест на удаление своей привычки"""
 
         self.client.force_authenticate(user=self.user_2)
