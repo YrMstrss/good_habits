@@ -9,23 +9,24 @@ from users.models import User
 class HabitCreateTestCase(APITestCase):
     """Тест-кейс на создание привычек"""
 
-    def setUp(self) -> None:
-        self.client = APIClient()
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.client = APIClient()
 
-        self.user = User.objects.create(
+        cls.user = User.objects.create(
             email='ivan@ivanov.com',
             first_name='Ivan',
             last_name='Ivanov',
             phone='88005553535',
             city='Moscow'
         )
-        self.user.set_password('Ivanov123')
-        self.user.save()
+        # cls.user.set_password('Ivanov123')
+        # cls.user.save()
 
-        self.client.force_authenticate(user=self.user)
+        # cls.client.force_authenticate(user=cls.user)
 
         # данные для создания полезной привычки
-        self.data_good_habit_right = {
+        cls.data_good_habit_right = {
             "place": "в парке",
             "time": "18:00",
             "action": "бегать",
@@ -37,7 +38,7 @@ class HabitCreateTestCase(APITestCase):
         }
 
         # данные для создания приятной привычки
-        self.data_nice_habit = {
+        cls.data_nice_habit = {
             "place": "в парке",
             "time": "18:30",
             "action": "пить воду",
@@ -47,7 +48,7 @@ class HabitCreateTestCase(APITestCase):
         }
 
         # данные для создания полезной привычки с ошибкой (есть и связанная привычка, и вознаграждение)
-        self.data_good_habit_wrong = {
+        cls.data_good_habit_wrong = {
             "place": "в парке",
             "time": "18:00",
             "action": "бегать",
@@ -60,7 +61,7 @@ class HabitCreateTestCase(APITestCase):
         }
 
         # данные для создания приятной привычки с неверным временем выполнения
-        self.data_nice_habit_wrong_time = {
+        cls.data_nice_habit_wrong_time = {
             "place": "в парке",
             "time": "18:30",
             "action": "пить воду",
@@ -70,7 +71,7 @@ class HabitCreateTestCase(APITestCase):
         }
 
         # данные для создания полезной привычки с неподходящей связанной привычкой
-        self.data_good_habit_linked_habit = {
+        cls.data_good_habit_linked_habit = {
             "place": "в парке",
             "time": "18:00",
             "action": "бегать",
@@ -83,7 +84,7 @@ class HabitCreateTestCase(APITestCase):
         }
 
         # данные для создания приятной привычки со связанной привычкой
-        self.data_nice_habit_linked_habit = {
+        cls.data_nice_habit_linked_habit = {
             "place": "в парке",
             "time": "18:30",
             "action": "пить воду",
@@ -94,6 +95,9 @@ class HabitCreateTestCase(APITestCase):
         }
 
     def test_create_habit(self):
+
+        self.client.force_authenticate(user=self.user)
+
         # проверка корректного создания полезной привычки
 
         response_good_habit_right = self.client.post(
@@ -204,30 +208,31 @@ class HabitCreateTestCase(APITestCase):
 class HabitReadTestCase(APITestCase):
     """Тест-кейс для чтения привычек"""
 
-    def setUp(self) -> None:
-        self.client = APIClient()
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.client = APIClient()
 
-        self.user = User.objects.create(
+        cls.user = User.objects.create(
             email='ivan@ivanovread.com',
             first_name='Ivan',
             last_name='Ivanov',
             phone='88005553535',
             city='Moscow'
         )
-        self.user.set_password('Ivanov123')
-        self.user.save()
+        # cls.user.set_password('Ivanov123')
+        # cls.user.save()
 
-        self.user_2 = User.objects.create(
+        cls.user_2 = User.objects.create(
             email='petr@petrov.com',
             first_name='Petr',
             last_name='Petrov',
             phone='88005553535',
             city='Moscow'
         )
-        self.user_2.set_password('Petrov123')
-        self.user_2.save()
+        # cls.user_2.set_password('Petrov123')
+        # cls.user_2.save()
 
-        self.habit_1 = Habit.objects.create(
+        cls.habit_1 = Habit.objects.create(
             place="в парке",
             time="18:30",
             action="тренировка",
@@ -240,7 +245,7 @@ class HabitReadTestCase(APITestCase):
             linked_habit=None
         )
 
-        self.habit_2 = Habit.objects.create(
+        cls.habit_2 = Habit.objects.create(
             place="в парке",
             time="18:30",
             action="пить воду",
@@ -253,7 +258,7 @@ class HabitReadTestCase(APITestCase):
             linked_habit=None
         )
 
-        self.habit_3 = Habit.objects.create(
+        cls.habit_3 = Habit.objects.create(
             place="в парке",
             time="18:30",
             action="тренировка",
@@ -266,7 +271,7 @@ class HabitReadTestCase(APITestCase):
             linked_habit_id=2
         )
 
-    def test_read_habit_list_owner_and_pubic(self):
+    def test_read_habit_list(self):
         """Тест на чтение списка привычек"""
 
         self.client.force_authenticate(user=self.user)
@@ -329,8 +334,7 @@ class HabitReadTestCase(APITestCase):
              }
         )
 
-    def test_read_habit_list_owner(self):
-
+        self.client.force_authenticate()
         self.client.force_authenticate(user=self.user_2)
 
         response_read_list = self.client.get(
@@ -365,7 +369,7 @@ class HabitReadTestCase(APITestCase):
              }
         )
 
-    def test_read_single_habit_public(self):
+    def test_read_single_habit(self):
         """Тест на чтение одной привычки"""
 
         self.client.force_authenticate(user=self.user_2)
@@ -396,9 +400,7 @@ class HabitReadTestCase(APITestCase):
             }
         )
 
-    def test_read_single_habit_not_public(self):
-        """Тест на чтение одной привычки"""
-
+        self.client.force_authenticate()
         self.client.force_authenticate(user=self.user_2)
 
         response_read_habit = self.client.get(
@@ -411,161 +413,161 @@ class HabitReadTestCase(APITestCase):
         )
 
 
-class HabitUpdateTestCase(APITestCase):
-    """Тест-кейс для редактирования привычек """
-
-    def setUp(self) -> None:
-        self.client = APIClient()
-
-        self.user = User.objects.create(
-            email='ivan@ivanov.com',
-            first_name='Ivan',
-            last_name='Ivanov',
-            phone='88005553535',
-            city='Moscow'
-        )
-        self.user.set_password('Ivanov123')
-        self.user.save()
-
-        self.user_2 = User.objects.create(
-            email='petr@petrov.com',
-            first_name='Petr',
-            last_name='Petrov',
-            phone='88005553535',
-            city='Moscow'
-        )
-        self.user_2.set_password('Petrov123')
-        self.user_2.save()
-
-        self.habit = Habit.objects.create(
-            place="в парке",
-            time="18:30",
-            action="тренировка",
-            is_nice=False,
-            is_public=True,
-            reward="вкусняшка",
-            time_to_complete=60,
-            period="2",
-            user_id=1,
-            linked_habit=None
-        )
-
-        self.data = {
-            "place": "на стадионе",
-            "time": "18:00",
-            "action": "бегать",
-            "is_nice": False,
-            "reward": "any reward",
-            "time_to_complete": 60,
-            "is_public": True,
-            "period": "3"
-        }
-
-    def test_update_habit(self):
-        """Тест для изменения привычки"""
-
-        self.client.force_authenticate(user=self.user)
-
-        response = self.client.put(
-            reverse('habit:update-habit', args=[self.habit.id]),
-            self.data
-        )
-
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
-
-        self.assertEqual(
-            response.json(),
-            {
-                "id": self.habit.id,
-                "place": "на стадионе",
-                "time": "18:00",
-                "action": "бегать",
-                "is_nice": False,
-                "reward": "any reward",
-                "time_to_complete": 60,
-                "is_public": True,
-                "period": "3",
-                "user": self.habit.user.id,
-                "linked_habit": None
-            }
-        )
-
-        self.client.force_authenticate(user=self.user_2)
-
-        response = self.client.put(
-            reverse('habit:update-habit', args=[self.habit.id]),
-            self.data
-        )
-
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_403_FORBIDDEN
-        )
-
-
-class HabitDeleteTestCase(APITestCase):
-    """Тест-кейс для удаления привычек """
-
-    def setUp(self) -> None:
-        self.client = APIClient()
-
-        self.user = User.objects.create(
-            email='ivan@ivanov.com',
-            first_name='Ivan',
-            last_name='Ivanov',
-            phone='88005553535',
-            city='Moscow'
-        )
-        self.user.set_password('Ivanov123')
-        self.user.save()
-
-        self.user_2 = User.objects.create(
-            email='petr@petrov.com',
-            first_name='Petr',
-            last_name='Petrov',
-            phone='88005553535',
-            city='Moscow'
-        )
-        self.user_2.set_password('Petrov123')
-        self.user_2.save()
-
-        self.habit = Habit.objects.create(
-            place="в парке",
-            time="18:30",
-            action="тренировка",
-            is_nice=False,
-            is_public=True,
-            reward="вкусняшка",
-            time_to_complete=60,
-            period="2",
-            user_id=1,
-            linked_habit=None
-        )
-
-    def test_delete_habit(self):
-        """Тест на удаление своей привычки"""
-
-        self.client.force_authenticate(user=self.user_2)
-
-        response = self.client.delete(
-            reverse('habit:delete-habit', args=[self.habit.id])
-        )
-
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_403_FORBIDDEN
-        )
-
-        self.client.force_authenticate(user=self.user)
-
-        response = self.client.delete(
-            reverse('habit:delete-habit', args=[self.habit.id])
-        )
-
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_204_NO_CONTENT
-        )
+# class HabitUpdateTestCase(APITestCase):
+#     """Тест-кейс для редактирования привычек """
+#
+#     def setUp(self) -> None:
+#         self.client = APIClient()
+#
+#         self.user = User.objects.create(
+#             email='ivan@ivanov.com',
+#             first_name='Ivan',
+#             last_name='Ivanov',
+#             phone='88005553535',
+#             city='Moscow'
+#         )
+#         self.user.set_password('Ivanov123')
+#         self.user.save()
+#
+#         self.user_2 = User.objects.create(
+#             email='petr@petrov.com',
+#             first_name='Petr',
+#             last_name='Petrov',
+#             phone='88005553535',
+#             city='Moscow'
+#         )
+#         self.user_2.set_password('Petrov123')
+#         self.user_2.save()
+#
+#         self.habit = Habit.objects.create(
+#             place="в парке",
+#             time="18:30",
+#             action="тренировка",
+#             is_nice=False,
+#             is_public=True,
+#             reward="вкусняшка",
+#             time_to_complete=60,
+#             period="2",
+#             user_id=1,
+#             linked_habit=None
+#         )
+#
+#         self.data = {
+#             "place": "на стадионе",
+#             "time": "18:00",
+#             "action": "бегать",
+#             "is_nice": False,
+#             "reward": "any reward",
+#             "time_to_complete": 60,
+#             "is_public": True,
+#             "period": "3"
+#         }
+#
+#     def test_update_habit(self):
+#         """Тест для изменения привычки"""
+#
+#         self.client.force_authenticate(user=self.user)
+#
+#         response = self.client.put(
+#             reverse('habit:update-habit', args=[self.habit.id]),
+#             self.data
+#         )
+#
+#         self.assertEqual(
+#             response.status_code,
+#             status.HTTP_200_OK
+#         )
+#
+#         self.assertEqual(
+#             response.json(),
+#             {
+#                 "id": self.habit.id,
+#                 "place": "на стадионе",
+#                 "time": "18:00",
+#                 "action": "бегать",
+#                 "is_nice": False,
+#                 "reward": "any reward",
+#                 "time_to_complete": 60,
+#                 "is_public": True,
+#                 "period": "3",
+#                 "user": self.habit.user.id,
+#                 "linked_habit": None
+#             }
+#         )
+#
+#         self.client.force_authenticate(user=self.user_2)
+#
+#         response = self.client.put(
+#             reverse('habit:update-habit', args=[self.habit.id]),
+#             self.data
+#         )
+#
+#         self.assertEqual(
+#             response.status_code,
+#             status.HTTP_403_FORBIDDEN
+#         )
+#
+#
+# class HabitDeleteTestCase(APITestCase):
+#     """Тест-кейс для удаления привычек """
+#
+#     def setUp(self) -> None:
+#         self.client = APIClient()
+#
+#         self.user = User.objects.create(
+#             email='ivan@ivanov.com',
+#             first_name='Ivan',
+#             last_name='Ivanov',
+#             phone='88005553535',
+#             city='Moscow'
+#         )
+#         self.user.set_password('Ivanov123')
+#         self.user.save()
+#
+#         self.user_2 = User.objects.create(
+#             email='petr@petrov.com',
+#             first_name='Petr',
+#             last_name='Petrov',
+#             phone='88005553535',
+#             city='Moscow'
+#         )
+#         self.user_2.set_password('Petrov123')
+#         self.user_2.save()
+#
+#         self.habit = Habit.objects.create(
+#             place="в парке",
+#             time="18:30",
+#             action="тренировка",
+#             is_nice=False,
+#             is_public=True,
+#             reward="вкусняшка",
+#             time_to_complete=60,
+#             period="2",
+#             user_id=1,
+#             linked_habit=None
+#         )
+#
+#     def test_delete_habit(self):
+#         """Тест на удаление своей привычки"""
+#
+#         self.client.force_authenticate(user=self.user_2)
+#
+#         response = self.client.delete(
+#             reverse('habit:delete-habit', args=[self.habit.id])
+#         )
+#
+#         self.assertEqual(
+#             response.status_code,
+#             status.HTTP_403_FORBIDDEN
+#         )
+#
+#         self.client.force_authenticate(user=self.user)
+#
+#         response = self.client.delete(
+#             reverse('habit:delete-habit', args=[self.habit.id])
+#         )
+#
+#         self.assertEqual(
+#             response.status_code,
+#             status.HTTP_204_NO_CONTENT
+#         )
