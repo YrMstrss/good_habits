@@ -135,6 +135,9 @@ class HabitTestCase(APITestCase):
         }
 
     def test_create_habit_right(self):
+        """
+        Тест на создание привычки
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.post(
@@ -192,6 +195,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_create_good_habit_wrong(self):
+        """
+        Тест на создание полезной привычки с неверными данными (указаны и связанная привычка и вознаграждение)
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.post(
@@ -205,6 +211,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_create_habit_wrong_time(self):
+        """
+        Тест на создание привычки с неверным временем выполнения
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.post(
@@ -218,6 +227,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_create_habit_with_wrong_linked(self):
+        """
+        Тест на создание привычки с указанием в качестве связанной привычки - полезной привычки
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.post(
@@ -231,6 +243,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_create_nice_habit_with_linked(self):
+        """
+        Тест на создание приятной привычки имеющей связанную
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.post(
@@ -244,6 +259,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_read_habit_list(self):
+        """
+        Тест на чтение списка привычек
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.get(
@@ -315,6 +333,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_read_single_habit_by_owner(self):
+        """
+        Тест на чтение одной привычки владельцем привычки
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.get(
@@ -344,6 +365,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_read_single_habit_by_other_user(self):
+        """
+        Тест на чтение приватной привычки пользователем, не являющимся владельцем
+        """
         self.client.force_authenticate(user=self.user_2)
 
         response = self.client.get(
@@ -356,6 +380,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_update_habit_by_owner(self):
+        """
+        Тест на редактирование привычки владельцем
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.put(
@@ -386,6 +413,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_update_habit_by_other_user(self):
+        """
+        Тест на редактирование привычки пользователем, не являющимся владельцем
+        """
         self.client.force_authenticate(user=self.user_2)
 
         response = self.client.put(
@@ -399,6 +429,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_delete_habit_by_other_user(self):
+        """
+        Тест на удаление привычки пользователем, не являющимся владельцем
+        """
         self.client.force_authenticate(user=self.user_2)
 
         response = self.client.delete(
@@ -411,6 +444,9 @@ class HabitTestCase(APITestCase):
         )
 
     def test_delete_habit_by_owner(self):
+        """
+        Тест на удаление привычки владельцем
+        """
         self.client.force_authenticate(user=self.user_1)
 
         response = self.client.delete(
