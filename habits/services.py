@@ -26,8 +26,7 @@ def create_periodic_task(obj: Habit) -> None:
     PeriodicTask.objects.create(
         interval=schedule,
         name=obj,
-        task='habits.tasks.enable_notifications',
+        task='habits.tasks.enable_notifications_task',
         start_time=start_time,
-        args=[obj.pk],
-        expires=datetime.utcnow() + timedelta(seconds=30)
+        args=[obj.pk]
     )

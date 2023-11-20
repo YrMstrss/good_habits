@@ -19,27 +19,44 @@ class UserRegisterTestCase(APITestCase):
             'password': 'Ivanov123'
         }
 
+    def test_register(self):
+        response = self.client.post(
+            reverse('users:register'),
+            data=self.data
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED
+        )
+
+        self.assertEqual(
+            response.json(),
+            {
+                'email': 'ivan@gmail.com'
+            }
+        )
+
 
 class UserTestCase(APITestCase):
+
     """
     Тест-кейс для модели пользователя
     """
-    def setUp(self) -> None:
-        self.client = APIClient()
 
-        self.user = User.objects.create(
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.client = APIClient()
+
+        cls.user = User.objects.create(
             email='ivan@ivanov.com',
             first_name='Ivan',
             last_name='Ivanov',
             phone='88005553535',
             city='Moscow'
         )
-        self.user.set_password('Ivanov123')
-        self.user.save()
 
-        self.client.force_authenticate(user=self.user)
-
-        self.data = {
+        cls.data = {
             "id": 1,
             "is_superuser": False,
             "first_name": "Ivan",
@@ -55,6 +72,9 @@ class UserTestCase(APITestCase):
         """
         Тест просмотра профиля пользователя
         """
+
+        self.client.force_authenticate(user=self.user)
+
         response = self.client.get(
             reverse('users:view-user', args=[self.user.id])
         )
@@ -67,9 +87,11 @@ class UserTestCase(APITestCase):
         self.assertEqual(
             response.json(),
             {
-                "id": 1,
+                "id": self.user.id,
                 "last_login": None,
                 "is_superuser": False,
+                "chat_id": None,
+                "telegram_username": None,
                 "first_name": "Ivan",
                 "last_name": "Ivanov",
                 "is_staff": False,
@@ -84,10 +106,13 @@ class UserTestCase(APITestCase):
             }
         )
 
-    def tset_update_user(self):
+    def test_update_user(self):
         """
         Тест для редактирования профиля пользователя
         """
+
+        self.client.force_authenticate(user=self.user)
+
         response = self.client.put(
             reverse('users:edit-user', args=[self.user.id]),
             data=self.data
@@ -101,9 +126,11 @@ class UserTestCase(APITestCase):
         self.assertEqual(
             response.json(),
             {
-                "id": 1,
+                "id": self.user.id,
                 "last_login": None,
                 "is_superuser": False,
+                "chat_id": None,
+                "telegram_username": None,
                 "first_name": "Ivan",
                 "last_name": "Ivanov",
                 "is_staff": False,
