@@ -7,7 +7,7 @@ from habits.models import Habit
 TOKEN = os.getenv('TG_BOT_API_KEY')
 
 
-def enable_notifications(pk: int, token=TOKEN) -> None:
+def enable_notifications_task(pk: int, token=TOKEN) -> None:
     """
     Периодическая задача. Отправляет пользователю сообщение в телеграм с напоминанием о том, что пора выполнить привычку
     :param pk: ID привычки
