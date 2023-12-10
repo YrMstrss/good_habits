@@ -93,6 +93,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASE_NAME_for_habits'),
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': 'db'
     }
 }
 
